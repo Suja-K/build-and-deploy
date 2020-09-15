@@ -1,0 +1,55 @@
+-- main intro for "Build and Deploy"
+-- run with TidalCycles
+-- change the 1s to 0s, or vice-versa in the "mix" variable to change the song :)
+
+-- MIDI output:
+-- midi1 = signals to synthesizer 
+-- midi2 = signals to drums, 36 = bassdrum, 38 = snare, 42 = highhat
+
+do
+  setcps(105/120)
+  hush
+  let mix =
+       [
+        1, -- bass1
+        1, -- bass2
+        0, -- drums1
+        1, -- drums2
+        1, -- hh
+        1, -- melody1
+        0 -- melody2
+       ]
+  --
+  -- basslines
+  d2 $ slow 4 $ struct "1__ 1__ 1_________"
+    $ midinote "<[[44 39]41~~] [[37 39]44~~]>"
+       # sound "midi1"
+       * gain (mix !! 0)
+  d3 $ slow 4 $ struct "1__ 1__ 1_________"
+    $ midinote "<[[[58, 63] [56, 63]][56, 60]~~] [[[56, 60] [58, 61]][56, 60]~~]>"
+    # sound "midi1"
+    * gain (mix !! 1)
+  --
+  -- drum pattern 1
+  d1 $ midinote "36*2" # sound "midi2" # gain 1
+    * gain (mix !! 2)
+  --
+  -- drum pattern2
+  d4 $ slow 1 $ struct "<1[11]1[1011]1[11]1[11]> 0" $ midinote "36" # sound "midi2" + gain 1.1 * gain (mix !! 3)
+  d5 $ slow 1 $ struct "0 <1 1 [1001] 1 1 1 [1001] [1011]>" $ midinote "38" # sound "midi2" + gain 1 * gain (mix !! 3)
+  --
+  -- melody 1 & melody 2
+  d6
+    $ whenmod 4 2 (# gain (mix !! 6))
+    $ every 3 (rot 3)
+    $ every 4 (rev)
+    -- $ whenmod 8 6 (fast 2)
+    -- $ sometimesBy 0.2 (jux (|+| up "7"))
+    $ midinote "56"
+    # sound "midi1" + up "0 4 5 <7 4 7 12 7 12 7 12>"
+      + up "12"
+      + up "0(5,8)"
+    * gain (mix !! 5)
+  --
+  -- highhat
+  d7 $ struct "0101" $ midinote "42" # sound "midi2" # gain 0.9 * gain (mix !! 4)

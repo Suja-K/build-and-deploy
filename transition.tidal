@@ -1,0 +1,11 @@
+-- midi
+do
+  hush
+  setcps(110/120)
+  once $ whenmod 2 1 (# gain 0) $ midinote "60 64 67 72 74 67 72 <74>" # sound "midi1" + up "-4" + up "24"
+
+-- SuperDirt synth
+do
+  hush
+  setcps(110/120)
+  once $ whenmod 2 1 (# gain 0) $ midinote "60 64 67 72 74 67 72 <74>" # sound "supersaw" # lpf 1500 + up "-4" + up "12" # gain 0.9
